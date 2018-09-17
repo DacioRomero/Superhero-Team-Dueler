@@ -13,6 +13,10 @@ class Ability:
     def update_attack(self, attack_strength):
         self.attack_strength = attack_strength
 
+class Weapon(Ability):
+    def attack(self):
+        return random.randint(0, self.attack_strength)
+
 class Hero:
     def __init__(self, name):
         self.abilities = list()
@@ -28,6 +32,33 @@ class Hero:
             attack_value += ability.attack()
 
         return attack_value
+
+class Team:
+    def __init__(self, team_name):
+        self.name = team_name
+        self.heroes = list()
+
+    def add_hero(self, hero):
+        self.heroes.append(hero)
+
+    def remove_hero(self, name):
+        hero = self.find_hero(name)
+        
+        if hero:
+            self.heroes.remove(hero)
+        else:
+            return 0
+
+    def find_hero(self, name):
+        for hero in self.heroes:
+            if hero.name == name:
+                return hero
+
+        return 0
+
+    def view_all_heroes(self):
+        for hero in self.heroes:
+            print(hero.name)
 
 if __name__ == "__main__":
     hero = Hero("Wonder Woman")
