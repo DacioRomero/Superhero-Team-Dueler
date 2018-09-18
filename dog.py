@@ -7,6 +7,7 @@ class Dog:
     def bark(self):
         print("Woof!")
 
+
 if __name__ == '__main__':
     my_first_dog = Dog("Annie")
     my_second_dog = Dog("Wyatt")
