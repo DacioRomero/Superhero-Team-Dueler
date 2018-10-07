@@ -22,9 +22,9 @@ class Weapon(Ability):
 
 class Hero:
     def __init__(self, name, health=100):
-        self.abilities = list()
+        self.abilities = []
         self.name = name
-        self.armors = list()
+        self.armors = []
         self.start_health = health
         self.health = health
         self.deaths = 0
@@ -65,7 +65,7 @@ class Hero:
 class Team:
     def __init__(self, team_name):
         self.name = team_name
-        self.heroes = list()
+        self.heroes = []
 
     def add_hero(self, hero):
         self.heroes.append(hero)
@@ -97,7 +97,7 @@ class Team:
         damage = damage_amt - defense
 
         if damage < 0:
-            damage = 0
+            return 0
 
         return self.deal_damage(damage)
 
@@ -119,15 +119,11 @@ class Team:
 
     def stats(self):
         for hero in self.heroes:
-            print('{}\'s K/D is {}/{}'
-                  .format(hero.name, hero.kills, hero.deaths))
+            print('{}: {} kills(s), {} death(s), {} health'
+                  .format(hero.name, hero.kills, hero.deaths, hero.health))
 
     def is_alive(self):
-        for hero in self.heroes:
-            if hero.health == 0:
-                return False
-
-        return True
+        return any(hero.health > 0 for hero in self.heroes)
 
     def update_kills(self):
         pass
@@ -183,7 +179,6 @@ class Arena:
         turn = 0
 
         while(self.team_one.is_alive() and self.team_two.is_alive()):
-            input_eof('Press ENTER to continue')
             print('Turn', turn)
             self.show_stats()
 
@@ -193,6 +188,7 @@ class Arena:
                 self.team_two.attack(self.team_one)
 
             turn += 1
+            input_eof('Press ENTER to continue')
 
         self.show_stats()
 
@@ -202,9 +198,9 @@ class Arena:
             print('Team 2 wins!')
 
     def show_stats(self):
-        print(self.team_one.name)
+        print('Team:', self.team_one.name)
         self.team_one.stats()
-        print(self.team_two.name)
+        print('Team:', self.team_two.name)
         self.team_two.stats()
 
 
@@ -216,7 +212,25 @@ def input_eof(prompt=''):
 
 
 if __name__ == '__main__':
+    game_is_running = True
+
+    # Instantiate Game Arena
     arena = Arena()
+
+    # Build Teams
     arena.build_team_one()
     arena.build_team_two()
-    arena.team_battle()
+
+    while game_is_running:
+        arena.team_battle()
+        arena.show_stats()
+        play_again = input("Play Again? Y or N: ")
+
+        # Check for Player Input
+        if play_again.lower() == "n":
+            game_is_running = False
+
+        else:
+            # Revive heroes to play again
+            arena.team_one.revive_heroes()
+            arena.team_two.revive_heroes()
